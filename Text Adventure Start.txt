@@ -1,0 +1,103 @@
+using System;
+using System.Collections.Generic;
+
+namespace TextAdventure
+{
+    class Item
+    {
+        public string itemName;
+        public int itemAttack;
+        public Item(string ItemName, int ItemAttack)
+        {
+            itemName = ItemName;
+            itemAttack = ItemAttack;
+        }
+    }
+    class Program
+    {
+        static string playerName;
+        static string currentRoom;
+        static bool closeGame;
+        static List<Item> inventory = new List<Item>();
+        static void StartGame()
+        {
+            Console.Clear();
+            Console.WriteLine("Welcome!");
+            Console.Write("Please enter your name: ");
+            playerName = Console.ReadLine();
+            Console.WriteLine($"Hello {playerName}! Are you ready to start?");
+            bool proceed = false;
+            while (proceed == false)
+            {
+                string answer = Console.ReadLine();
+                if (answer.ToLower() == "yes")
+                {
+                    proceed = true;
+                    currentRoom = "FirstRoom";
+                }
+                else if (answer.ToLower() == "no")
+                {
+                    proceed = true;
+                    currentRoom = "StartGame";
+                }
+                else
+                {
+                    Console.Write("Enter either 'yes' or 'no': ");
+                }
+            }
+        }
+        static void FirstRoom()
+        {
+            Item sword = new Item("wooden sword", 5);
+            Item key = new Item("old and rusty key", 0);
+            Item knife = new Item("small throwing knife", 5);
+
+            inventory.Add(sword);
+            Console.Clear();
+            Console.WriteLine($"You are equipped with one {sword.itemName}, and your task is to slay the monster at the end of the adventure\n In front of you is  a table with two items on it, one {knife.itemName} and one {key.itemName}\n" +
+                $"You can only pick one of these items");
+            Console.Write("\nWhich one do you choose? ");
+            bool choosing = true;
+            while (choosing == true)
+            {
+                string ChosenItem = Console.ReadLine();
+                if (ChosenItem.ToLower().Contains("knife"))
+                {
+                    inventory.Add(knife);
+                    Console.WriteLine($"You chose to pick up a small rusty, pretty useless {knife.itemName}");
+                    choosing = false;
+                }
+                else if (ChosenItem.ToLower().Contains("key"))
+                {
+                    inventory.Add(key);
+                    Console.WriteLine($"You chose to pick up the {key.itemName} that could open all kinds of doors and treasure!");
+                    choosing = false;
+                }
+                else
+                {
+                    Console.WriteLine("Whatever you just said does not exist on this table that only contains two items... you need to choose between one of them...");
+                }
+            }
+        }
+        static void Main(string[] args)
+        {
+            currentRoom = "StartGame";
+
+            while (closeGame == false)
+            {
+                if (currentRoom == "StartGame")
+                {
+                    StartGame();
+                }
+                else if (currentRoom == "FirstRoom")
+                {
+                    FirstRoom();
+                }
+                else
+                {
+                    closeGame = true;
+                }
+            }
+        }
+    }
+}
