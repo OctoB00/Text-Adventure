@@ -19,9 +19,15 @@ namespace TextAdventure
         static string currentRoom;
         static bool closeGame;
         static List<Item> inventory = new List<Item>();
+        static int GenerateRandomNumber(int lowest, int highest)
+        {
+            int randomNumber = new Random().Next(lowest, highest + 1);
+            return randomNumber;
+        }
         static void StartGame()
         {
             Console.Clear();
+            inventory.Clear();
             Console.WriteLine("Welcome!");
             Console.Write("Please enter your name: ");
             playerName = Console.ReadLine();
@@ -55,7 +61,7 @@ namespace TextAdventure
             inventory.Add(sword);
             Console.Clear();
             Console.WriteLine($"You are equipped with one {sword.itemName}, and your task is to slay the monster at the end of the adventure\n In front of you is  a table with two items on it, one {knife.itemName} and one {key.itemName}\n" +
-                $"You can only pick one of these items");
+                $"You can only pick one of these items (after making a choice, you need to press enter again to move on)");
             Console.Write("\nWhich one do you choose? ");
             bool choosing = true;
             while (choosing == true)
@@ -65,17 +71,244 @@ namespace TextAdventure
                 {
                     inventory.Add(knife);
                     Console.WriteLine($"You chose to pick up a small rusty, pretty useless {knife.itemName}");
+                    Console.ReadLine();
                     choosing = false;
                 }
                 else if (ChosenItem.ToLower().Contains("key"))
                 {
                     inventory.Add(key);
                     Console.WriteLine($"You chose to pick up the {key.itemName} that could open all kinds of doors and treasure!");
+                    Console.ReadLine();
                     choosing = false;
                 }
                 else
                 {
                     Console.WriteLine("Whatever you just said does not exist on this table that only contains two items... you need to choose between one of them...");
+                }
+            }
+            currentRoom = "SecondRoom";
+        }
+        static void SecondRoom()
+        {
+            Console.Clear();
+            Console.WriteLine("You exit the room and find yourself standing in a dark hallway. You can either go to the locked door on your right side, or continue down the hallway to your left");
+            Console.Write("\nWhich way do you go? ");
+            bool choosing = true;
+            while (choosing == true)
+            {
+                string ChosenDirection = Console.ReadLine();
+                if (ChosenDirection.ToLower().Contains("right"))
+                {
+                    for (int i = 1; i < inventory.Count; i++)
+                    {
+                        if (inventory[i].itemName.Contains("key"))
+                        {
+                            Console.WriteLine("You opened the locked door with the key you picked up and went inside");
+                            currentRoom = "LockedRoom";
+                            Console.ReadLine();
+                            choosing = false;
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("The locked door seems to have a keyhole but you don't have anything to open it with, so you choose to walk down the hallway");
+                            currentRoom = "ThirdRoom";
+                            Console.ReadLine();
+                            choosing = false;
+                        }
+                    }
+                }
+                else if (ChosenDirection.ToLower().Contains("left"))
+                {
+                    Console.WriteLine("You continue to walk through the hallway you entered");
+                    currentRoom = "ThirdRoom";
+                    Console.ReadLine();
+                    choosing = false;
+                }
+                else
+                {
+                    Console.WriteLine("You either entered a direction you could not walk in (the door behind you locked itself shut) or you did not choose a direction altogheter. You need to either go right or left");
+                }
+            }
+        }
+        static void LockedRoom()
+        {
+            Console.Clear();
+            Console.WriteLine("Inside the room lies a shiny sword! You can however only carry one weapon at a time and are already carrying a wooden sword");
+            Console.Write("\nDo you want to swap your wooden sword for it? ");
+            bool choosing = true;
+            while (choosing == true)
+            {
+                string Choice = Console.ReadLine();
+                if (Choice.ToLower().Contains("yes"))
+                {
+                    foreach (Item item in inventory)
+                    {
+                        if (item.itemName == "wooden sword")
+                        {
+                            Console.WriteLine("Since shiny swords are always better (at least they are in most games and shows) you decide to swap the old wooden sword for the clearly cooler and superior sword! You then leave the room and go down the hallway behind you");
+                            item.itemName = "shiny sword";
+                            item.itemAttack = 20;
+                            Console.ReadLine();
+                            choosing = false;
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("You weren't carrying the wooden sword! So you just pick up the shiny sword and go down the hallway");
+                            Item shinySword = new Item("shiny sword", 20);
+                            inventory.Add(shinySword);
+                            Console.ReadLine();
+                            choosing = false;
+                            break;
+                        }
+                    }
+                }
+                else if (Choice.ToLower().Contains("no"))
+                {
+                    Console.WriteLine("You decide to go against your instincts to pick up and/or touch shiny things and not pick up the very... boring... sword");
+                    Console.ReadLine();
+                    choosing = false;
+                }
+                else
+                {
+                    Console.WriteLine("I know it might be hard, but unfotunately because of the rules of this game, you have to choose to either ignore the sword or swap it. But you can do it, take your time and when you're ready, enter either yes or no.");
+                }
+            }
+            currentRoom = "ThirdRoom";
+        }
+        static void ThirdRoom()
+        {
+            Console.Clear();
+            Console.WriteLine("As you reach the end of the hallway, an eerie space opens up before you.");
+            Console.Write("\nIn the middle of the open space, on the floor, lies an old corpse. Do you want to loot it or continue? ");
+            bool choosing = true;
+            while (choosing == true)
+            {
+                string answer = Console.ReadLine();
+                bool shouldLoot = answer.ToLower().Contains("loot");
+                bool shouldContinue = answer.ToLower().Contains("continue");
+                string amuletText = "In the corpse's hand is an amulet. As you hang it around your neck,";
+                if (shouldLoot || shouldContinue)
+                {
+                    if (shouldLoot)
+                    {
+                        int random = GenerateRandomNumber(1, 4);
+                        if (random > 1)
+                        {
+                            Console.WriteLine($"{amuletText} you feel a warm sensation spreading through your body.");
+                            Item blessedAmulet = new Item("blessed amulet", 5);
+                            inventory.Add(blessedAmulet);
+                            Console.ReadLine();
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{amuletText} you feel an uneasy feeling spreading through your body.");
+                            Item cursedAmulet = new Item("cursed amulet", -5);
+                            inventory.Add(cursedAmulet);
+                            Console.ReadLine();
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("You think about the fact that the body must have died for a reason and that it might've been because of the amulet, and so you choose to leave it and continue onwards");
+                    }
+                    choosing = false;
+                    currentRoom = "BossFight";
+                }
+                else
+                {
+                    Console.WriteLine("Well... I don't know what to tell you other than that you need to choose to either 'loot' the body or 'continue'");
+                }
+            }
+        }
+        static void BossFight()
+        {
+            Console.Clear();
+            Console.WriteLine("Suddenly the room starts to shake. The floor breaks open in front of you, and a huge minotaur climbs out of the hole!");
+            Console.Write("\nDo you attack or flee? ");
+            int minotaurHP = GenerateRandomNumber(10, 20);
+            int runChance = GenerateRandomNumber(1, 2);
+            string fleeRepeat = "You felt your choices creeping up your spine and realized you were not ready.As you try to run the minotaur charges you";
+            int totalAttack = 0;
+            bool choosing = true;
+            foreach (Item item in inventory)
+            {
+                totalAttack += item.itemAttack;
+            }
+            while (choosing == true)
+            {
+                string fleeAttack = Console.ReadLine();
+                if (fleeAttack.ToLower().Contains("attack"))
+                {
+                    if (totalAttack >= minotaurHP)
+                    {
+                        Console.WriteLine("Your attack is successful! The minotaur falls to the ground dead.");
+                        currentRoom = "GameWon";
+                        Console.ReadLine();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Your attack is not strong enough to kill the monster! The minotaur charges into you and everything turns black...");
+                        currentRoom = "GameLost";
+                        Console.ReadLine();
+                    }
+                    choosing = false;
+                }
+                else if (fleeAttack.ToLower().Contains("flee"))
+                {
+                    if (runChance == 1)
+                    {
+                        Console.WriteLine($"{fleeRepeat} but you manage to dodge and fled successfully");
+                        currentRoom = "FledGame";
+                        Console.ReadLine();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{fleeRepeat} and hits you! You are flung against the wall and as you feel your body hit the hard concrete, you lose conciousness...");
+                        currentRoom = "GameLost";
+                        Console.ReadLine();
+                    }
+                    choosing = false;
+                }
+                else
+                {
+                    Console.WriteLine("LOOK! THERE IS A GIANT MINOTAUR IN FRONT OF YOU, EITHER ATTACK OR RUN! DOESN'T MATTER WHAT, JUST DO SOMETHING");
+                }
+            }
+        }
+        static void LastRoom()
+        {
+            Console.Clear();
+            if (currentRoom == "GameWon")
+            {
+                Console.WriteLine("Congratulations! You won! There might still be choices you didn't make though. So... wanna go again or do you want to leave? (enter either 'again' or 'leave')");
+            }
+            else if (currentRoom == "GameLost")
+            {
+                Console.WriteLine("Ouch... That looked like it hurt... Which it probably did since you're dead and all... So... Want to try to take revenge and play again or do you want to leave? (enter either 'again' or 'leave')");
+            }
+            else
+            {
+                Console.WriteLine("Didn't feel ready huh? I understand, when being given multiple choices, there is usually one that is better than the other. However, you didn't realize how far you ran so you are outside again and accidentally dropped all your things except for the wooden sword... Want to go back in and try again or go home? (enter either 'again' or 'leave')");
+            }
+            bool choosing = true;
+            while (choosing == true)
+            {
+                string LeaveGo = Console.ReadLine();
+                if (LeaveGo.ToLower().Contains("again"))
+                {
+                    currentRoom = "StartGame";
+                    choosing = false;
+                }
+                else if (LeaveGo.ToLower().Contains("leave"))
+                {
+                    currentRoom = "leave";
+                    choosing = false;
+                }
+                else
+                {
+                    Console.WriteLine("There was a lot to read huh? Just enter either 'again' to restart and play again or 'leave' to quit the game");
                 }
             }
         }
@@ -92,6 +325,26 @@ namespace TextAdventure
                 else if (currentRoom == "FirstRoom")
                 {
                     FirstRoom();
+                }
+                else if (currentRoom == "SecondRoom")
+                {
+                    SecondRoom();
+                }
+                else if (currentRoom == "LockedRoom")
+                {
+                    LockedRoom();
+                }
+                else if(currentRoom == "ThirdRoom")
+                {
+                    ThirdRoom();
+                }
+                else if (currentRoom == "BossFight")
+                {
+                    BossFight();
+                }
+                else if (currentRoom == "GameWon" || currentRoom == "GameLost" || currentRoom == "FledGame")
+                {
+                    LastRoom();
                 }
                 else
                 {
