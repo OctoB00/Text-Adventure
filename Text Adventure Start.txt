@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TextAdventure
 {
-    class Item
+        class Item
     {
         public string itemName;
         public int itemAttack;
@@ -61,24 +61,24 @@ namespace TextAdventure
             inventory.Add(sword);
             Console.Clear();
             Console.WriteLine($"You are equipped with one {sword.itemName}, and your task is to slay the monster at the end of the adventure\n In front of you is  a table with two items on it, one {knife.itemName} and one {key.itemName}\n" +
-                $"You can only pick one of these items (after making a choice, you need to press enter again to move on)");
+                $"You can only pick one of these items (after making a choice, you need to wait 5 seconds and not press anything)");
             Console.Write("\nWhich one do you choose? ");
             bool choosing = true;
-            while (choosing == true)
+            while (choosing)
             {
                 string ChosenItem = Console.ReadLine();
                 if (ChosenItem.ToLower().Contains("knife"))
                 {
                     inventory.Add(knife);
                     Console.WriteLine($"You chose to pick up a small rusty, pretty useless {knife.itemName}");
-                    Console.ReadLine();
+                    Thread.Sleep(5000);
                     choosing = false;
                 }
                 else if (ChosenItem.ToLower().Contains("key"))
                 {
                     inventory.Add(key);
                     Console.WriteLine($"You chose to pick up the {key.itemName} that could open all kinds of doors and treasure!");
-                    Console.ReadLine();
+                    Thread.Sleep(5000);
                     choosing = false;
                 }
                 else
@@ -94,7 +94,7 @@ namespace TextAdventure
             Console.WriteLine("You exit the room and find yourself standing in a dark hallway. You can either go to the locked door on your right side, or continue down the hallway to your left");
             Console.Write("\nWhich way do you go? ");
             bool choosing = true;
-            while (choosing == true)
+            while (choosing)
             {
                 string ChosenDirection = Console.ReadLine();
                 if (ChosenDirection.ToLower().Contains("right"))
@@ -103,9 +103,10 @@ namespace TextAdventure
                     {
                         if (inventory[i].itemName.Contains("key"))
                         {
-                            Console.WriteLine("You opened the locked door with the key you picked up and went inside");
+                            Console.WriteLine("You opened the locked door with the key you picked up but the key vanished into the door. You still decide to enter the room");
                             currentRoom = "LockedRoom";
-                            Console.ReadLine();
+                            inventory.RemoveAt(i);
+                            Thread.Sleep(5000);
                             choosing = false;
                             break;
                         }
@@ -113,7 +114,7 @@ namespace TextAdventure
                         {
                             Console.WriteLine("The locked door seems to have a keyhole but you don't have anything to open it with, so you choose to walk down the hallway");
                             currentRoom = "ThirdRoom";
-                            Console.ReadLine();
+                            Thread.Sleep(5000);
                             choosing = false;
                         }
                     }
@@ -122,7 +123,7 @@ namespace TextAdventure
                 {
                     Console.WriteLine("You continue to walk through the hallway you entered");
                     currentRoom = "ThirdRoom";
-                    Console.ReadLine();
+                    Thread.Sleep(5000);
                     choosing = false;
                 }
                 else
@@ -137,7 +138,7 @@ namespace TextAdventure
             Console.WriteLine("Inside the room lies a shiny sword! You can however only carry one weapon at a time and are already carrying a wooden sword");
             Console.Write("\nDo you want to swap your wooden sword for it? ");
             bool choosing = true;
-            while (choosing == true)
+            while (choosing)
             {
                 string Choice = Console.ReadLine();
                 if (Choice.ToLower().Contains("yes"))
@@ -149,7 +150,7 @@ namespace TextAdventure
                             Console.WriteLine("Since shiny swords are always better (at least they are in most games and shows) you decide to swap the old wooden sword for the clearly cooler and superior sword! You then leave the room and go down the hallway behind you");
                             item.itemName = "shiny sword";
                             item.itemAttack = 20;
-                            Console.ReadLine();
+                            Thread.Sleep(5000);
                             choosing = false;
                             break;
                         }
@@ -158,7 +159,7 @@ namespace TextAdventure
                             Console.WriteLine("You weren't carrying the wooden sword! So you just pick up the shiny sword and go down the hallway");
                             Item shinySword = new Item("shiny sword", 20);
                             inventory.Add(shinySword);
-                            Console.ReadLine();
+                            Thread.Sleep(5000);
                             choosing = false;
                             break;
                         }
@@ -167,7 +168,7 @@ namespace TextAdventure
                 else if (Choice.ToLower().Contains("no"))
                 {
                     Console.WriteLine("You decide to go against your instincts to pick up and/or touch shiny things and not pick up the very... boring... sword");
-                    Console.ReadLine();
+                    Thread.Sleep(5000);
                     choosing = false;
                 }
                 else
@@ -183,7 +184,7 @@ namespace TextAdventure
             Console.WriteLine("As you reach the end of the hallway, an eerie space opens up before you.");
             Console.Write("\nIn the middle of the open space, on the floor, lies an old corpse. Do you want to loot it or continue? ");
             bool choosing = true;
-            while (choosing == true)
+            while (choosing)
             {
                 string answer = Console.ReadLine();
                 bool shouldLoot = answer.ToLower().Contains("loot");
@@ -199,28 +200,135 @@ namespace TextAdventure
                             Console.WriteLine($"{amuletText} you feel a warm sensation spreading through your body.");
                             Item blessedAmulet = new Item("blessed amulet", 5);
                             inventory.Add(blessedAmulet);
-                            Console.ReadLine();
+                            Thread.Sleep(5000);
                         }
                         else
                         {
                             Console.WriteLine($"{amuletText} you feel an uneasy feeling spreading through your body.");
                             Item cursedAmulet = new Item("cursed amulet", -5);
                             inventory.Add(cursedAmulet);
-                            Console.ReadLine();
+                            Thread.Sleep(5000);
                         }
                     }
                     else
                     {
                         Console.WriteLine("You think about the fact that the body must have died for a reason and that it might've been because of the amulet, and so you choose to leave it and continue onwards");
+                        Thread.Sleep(5000);
                     }
                     choosing = false;
-                    currentRoom = "BossFight";
+                    currentRoom = "FourthRoom";
                 }
                 else
                 {
                     Console.WriteLine("Well... I don't know what to tell you other than that you need to choose to either 'loot' the body or 'continue'");
                 }
             }
+        }
+        static void FourthRoom()
+        {
+            Console.Clear();
+            Console.WriteLine("You continue down the hallway and soon find yourself in a big room with a chest in the middle. The chest doesn't have a keyhole so you look around and find a small hole next to the chest. There is also a sign that says 'Make a sacrifice to claim the prize'");
+            Console.WriteLine("\nYou figure that one of your items should be enough. Do you want to sacrifice an item or ignore the chest?");
+            string sacrificeRepeat = "You pick it up and move on";
+            bool choosing = true;
+            while (choosing)
+            {
+                string answer = Console.ReadLine();
+                if (answer.ToLower().Contains("sacrifice"))
+                {
+                    Console.WriteLine("You check your inventory and find: ");
+                    for (int i = 0; i < inventory.Count; i++)
+                    {
+                        Console.WriteLine($"a {inventory[i].itemName}");
+                    }
+                    Console.Write("Which one do you sacrifice? (you can also choose to ignore it if you feel ready): ");
+                    foreach (Item item in inventory)
+                    {
+                        string sacrifice = Console.ReadLine();
+                        if (sacrifice.ToLower().Contains("wooden sword") || sacrifice.ToLower() == "wooden sword" && item.itemName == "wooden sword")
+                        {
+                            Console.Write("You decide to throw the old wooden sword in the hole. The chest opens up and inside is... the wooden sword... guess they didn't like it... You decide to keep looking to see if you want to throw away anything else:");
+                            continue;
+                        }
+                        else if (sacrifice.ToLower().Contains("key") || sacrifice.ToLower() == "key" && item.itemName.Contains("key"))
+                        {
+                            Console.WriteLine($"You decide to throw away the unsued key in the hole. The chest opens and you find a sword shaped like a key inside! {sacrificeRepeat}");
+                            item.itemName = "keyblade";
+                            item.itemAttack = 10;
+                            Thread.Sleep(5000);
+                            choosing = false;
+                            break;
+                        }
+                        else if (sacrifice.ToLower().Contains("knife") || sacrifice.ToLower() == "knife" && item.itemName.Contains("knife"))
+                        {
+                            Console.WriteLine($"You decide to throw away the small throwing knife (ironic huh?). The chest opens up and inside lies a huge sword! Whoever opened it must have liked knifes! {sacrificeRepeat}");
+                            item.itemName = "Big sword";
+                            item.itemAttack = 20;
+                            Thread.Sleep(5000);
+                            choosing = false;
+                            break;
+                        }
+                        else if (sacrifice.ToLower().Contains("shiny sword") || sacrifice.ToLower() == "shiny sword" && item.itemName == "shiny sword")
+                        {
+                            Console.WriteLine($"You throw the shiny sword hoping to get something better. The chest opens and you find a gun with the shiny sword under the barrel inside! Since the weapon is so cool (and not medievalish) {sacrificeRepeat}");
+                            item.itemName = "GunSword";
+                            item.itemAttack = 30;
+                            Thread.Sleep(5000);
+                            choosing = false;
+                            break;
+                        }
+                        else if (sacrifice.ToLower().Contains("cursed amulet") || sacrifice.ToLower() == "cursed amulet" && item.itemName == "cursed amulet")
+                        {
+                            Console.WriteLine("The amulet seems to somehow have gotten stuck on your neck and you can't remove it. You feel even more uneasy knowing you can't take it off but keep looking for something to throw");
+                            item.itemAttack = -10;
+                            continue;
+                        }
+                        else if (sacrifice.ToLower().Contains("blessed amulet") || sacrifice.ToLower() == "blessed amulet" && item.itemName == "blessed amulet")
+                        {
+                            Console.Write("You decide to throw the amulet you just picked up into the hole. When you take it off you don't feel energized anymore but decide to throw it anyway. The chests opens up and inside is... the amulet? But you just threw that... You decide to pick it up anyway and as you put it on you ");
+                            int amulet = GenerateRandomNumber(1, 2);
+                            if (amulet == 1)
+                            {
+                                Console.Write($"feel energized again! You decide to not risk throwing it away again and something happening so {sacrificeRepeat}");
+                                Thread.Sleep(5000);
+                                choosing = false;
+                                break;
+                            }
+                            else
+                            {
+                                Console.Write($"feel uneasy and drained. You try to take it off but it doesn't work. You figure that if you throw something else away it might also turn into something bad so {sacrificeRepeat}");
+                                item.itemName = "cursed amulet";
+                                item.itemAttack = -5;
+                                Thread.Sleep(5000);
+                                choosing = false;
+                                break;
+                            }
+                        }
+                        else if (sacrifice.ToLower().Contains("ignore"))
+                        {
+                            Console.WriteLine("You decide that what you are carrying should be good enough and keep moving");
+                            Thread.Sleep(5000);
+                            choosing = false;
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Whatever you just entered was not in your inventory. You need to either pick an item to throw from the list above or 'ignore' the chest and move on");
+                        }
+                    }
+                }
+                else if (answer.ToLower().Contains("ignore"))
+                {
+                    Console.WriteLine("You decide to not throw away any of your precious items as you might not get anything back. Therefore you ignore the chest and move on");
+                    Thread.Sleep(5000);
+                    choosing = false;
+                }
+                else
+                {
+                    Console.WriteLine("Look, you only have to options here, either 'sacrifice' an item or 'ignore' the chest, now come on! You are almost to the end!");
+                }
+            }
+            currentRoom = "BossFight";
         }
         static void BossFight()
         {
@@ -229,8 +337,9 @@ namespace TextAdventure
             Console.Write("\nDo you attack or flee? ");
             int minotaurHP = GenerateRandomNumber(10, 20);
             int runChance = GenerateRandomNumber(1, 2);
-            string fleeRepeat = "You felt your choices creeping up your spine and realized you were not ready.As you try to run the minotaur charges you";
+            string fleeRepeat = "You felt your choices creeping up your spine and realized you were not ready. As you try to run the minotaur charges you";
             int totalAttack = 0;
+            int nochoice = 0;
             bool choosing = true;
             foreach (Item item in inventory)
             {
@@ -245,13 +354,13 @@ namespace TextAdventure
                     {
                         Console.WriteLine("Your attack is successful! The minotaur falls to the ground dead.");
                         currentRoom = "GameWon";
-                        Console.ReadLine();
+                        Thread.Sleep(5000);
                     }
                     else
                     {
                         Console.WriteLine("Your attack is not strong enough to kill the monster! The minotaur charges into you and everything turns black...");
                         currentRoom = "GameLost";
-                        Console.ReadLine();
+                        Thread.Sleep(5000);
                     }
                     choosing = false;
                 }
@@ -261,19 +370,38 @@ namespace TextAdventure
                     {
                         Console.WriteLine($"{fleeRepeat} but you manage to dodge and fled successfully");
                         currentRoom = "FledGame";
-                        Console.ReadLine();
+                        Thread.Sleep(5000);
                     }
                     else
                     {
                         Console.WriteLine($"{fleeRepeat} and hits you! You are flung against the wall and as you feel your body hit the hard concrete, you lose conciousness...");
                         currentRoom = "GameLost";
-                        Console.ReadLine();
+                        Thread.Sleep(5000);
                     }
                     choosing = false;
                 }
                 else
                 {
-                    Console.WriteLine("LOOK! THERE IS A GIANT MINOTAUR IN FRONT OF YOU, EITHER ATTACK OR RUN! DOESN'T MATTER WHAT, JUST DO SOMETHING");
+                    if (nochoice == 0)
+                    {
+                        Console.WriteLine("LOOK, THERE IS A GIANT MINOTAUR IN FRONT OF YOU, EITHER ATTACK OR RUN! DOESN'T MATTER WHAT, JUST DO SOMETHING");
+                        nochoice++;
+                    }
+                    else if (nochoice == 1)
+                    {
+                        Console.WriteLine("THE MINOTAUR IS CHARGING UP, JUST DO SOMETHING!");
+                    }
+                    else if (nochoice == 2)
+                    {
+                        Console.WriteLine("THE MINOTAUR IS RUNNING TOWARDS YOU! IF YOU DON'T DO SOMETHING, IT'S GONNA KILL YOU!");
+                    }
+                    else if (nochoice == 3)
+                    {
+                        Console.WriteLine("You took too long to make a decision so the minotaur was free to rush into you and kill you no problem.");
+                        currentRoom = "GameLost";
+                        Thread.Sleep(5000);
+                        choosing = false;
+                    }
                 }
             }
         }
@@ -337,6 +465,10 @@ namespace TextAdventure
                 else if(currentRoom == "ThirdRoom")
                 {
                     ThirdRoom();
+                }
+                else if (currentRoom == "FourthRoom")
+                {
+                    FourthRoom();
                 }
                 else if (currentRoom == "BossFight")
                 {
